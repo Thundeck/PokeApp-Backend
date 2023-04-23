@@ -11,7 +11,6 @@ const getAllPokemons = async (_req, res) =>{
 
 const getPokemonDetails = async (req, res) =>{
     const {id} = req.body
-    console.log(id)
     try {
         const Pokemons = await PokemonService.getPokemonDetails(id)
         res.json(Pokemons)
@@ -21,19 +20,19 @@ const getPokemonDetails = async (req, res) =>{
 }
 
 const getPokemonName = async (req, res) =>{
-    const {name} = req.body
+    const name = req.body
     try {
-        const Pokemons = await PokemonService.getPokemonName(name.toLowerCase())
+        const Pokemons = await PokemonService.getPokemonName(name)
         res.json(Pokemons)
     } catch (error) {
         res.status(400).send(error)
     }
 }
 
-const createPokemon = async (data) =>{
+const createPokemon = async (req,res) =>{
+    const data = req.body
     try {
         const Pokemon = await PokemonService.createPokemon(data)
-        Pokemon && console.log("created")
     } catch (error) {
         res.status(400).send(error)
 

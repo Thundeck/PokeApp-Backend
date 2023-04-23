@@ -5,7 +5,8 @@ const Schema = mongoose.Schema
 const TypeSchema = new Schema(
   {
     name: {
-      type: String
+      type: String,
+      unique:true
     }
   })
 

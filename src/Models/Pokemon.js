@@ -12,6 +12,7 @@ const PokemonSchema = new Schema(
     name: {
       type: String,
       require: true,
+      unique:true
     },
     health: {
       type: Number,

@@ -22,8 +22,9 @@ const getAllPokemons = async () =>{
 const populateDB = async () =>{
     try {
         const api = await axios.get(API)
-        const arrPokemons = await axios.all(api.data.results.map( e=> axios.get(e.url)))
-        const info = arrPokemons.map( e => e.data)
+        const arrPokemons = await axios.all(api?.data?.results?.map( e=> axios.get(e?.url)))
+        const info = arrPokemons?.map( e => e?.data)
+
 
         const pokemonsApi = info.map(e => {return {
         name:e.name,
@@ -41,7 +42,6 @@ const populateDB = async () =>{
             try {
                 const find = await PokemonModel.findOne({name:e.name})
                 if (find) throw "Already created";
-                console.log(e)
                 const types = await TypeModel.find(),
                 filter = types.filter(t => e.types.includes(t.name)).map(l => l._id)
                 const create = await PokemonModel.create({...e, types:filter})
@@ -72,16 +72,16 @@ const createPokemon = async (data) => {
     if(sprites.length < 1) throw "at least one sprite is required"
 
     try {
-        const arrSprites = await axios.all(sprites.map( img=> cloudinary.uploader.upload(img, {
+        const arrSprites = await axios.all(sprites.map( img => cloudinary.uploader.upload(img, {
             folder: "Pokemons"
           })))
         const links = arrSprites.map(e => e.secure_url)
-        const typesDB = TypeModel.find()
+        const typesDB = await TypeModel.find()
 
         const find = await PokemonModel.findOne({name})
         if (find) throw "pokemon already created"
 
-        const create = await PokemonModel.create({...data, sprites:links, types:typesDB.filter(t => types.includes(t.name)).map(l => l._id)})
+        const create = await PokemonModel.create({...data, sprites:links, types:typesDB?.filter(t => types.includes(t.name)).map(l => l._id)})
 
         return create
 
@@ -94,11 +94,9 @@ const createPokemon = async (data) => {
 
 const getPokemonName = async (name) => {
     if(!name) throw "name is required"
-
     try {
-        const found = await PokemonModel.findOne({name}).populate("types",{
-            __v:0
-        })
+        const found = await PokemonModel.findOne(name).populate("types")
+        if (!found) throw new Error("Can't find pokemon")
         return found
     } catch (error) {
         console.log(error)
